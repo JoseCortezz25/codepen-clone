@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import Split from 'react-split-grid'
 import './App.css'
 
 function App() {
@@ -35,29 +36,48 @@ function App() {
     `
   }
 
+
+
   return (
     <main className='Main'>
-      <section>
 
-        <div>
-          <label htmlFor=""></label>
-          <textarea name="" id="" ref={html} onInput={update}></textarea>
-        </div>
+      <Split
+        columnCursor="col-resize"
+        rowCursor="row-resize"
+        render={({
+          getGridProps,
+          getGutterProps,
+        }) => (
+          <div className={"grid-container"} {...getGridProps()}>
+            <div className={"grid-item item-block1"}>
+              <label htmlFor=""></label>
+              <textarea name="" id="" ref={html} onInput={update}></textarea>
+            </div>
+            <div className={"grid-item item-block2"}>
+              <label htmlFor=""></label>
+              <textarea name="" id="" ref={css} onInput={update}></textarea>
+            </div>
+            <div className={"grid-item item-block3"}>
+              <label htmlFor=""></label>
+              <textarea name="" id="" ref={js} onInput={update}></textarea>
+            </div>
+            <div className={"grid-item item-block4"}>
+              <iframe srcDoc={template}></iframe>
+            </div>
 
-        <div>
-          <label htmlFor=""></label>
-          <textarea name="" id="" ref={css} onInput={update}></textarea>
-        </div>
+            <div
+              className={"grid-gutter item-horizontal gutter-horizontal"}
+              {...getGutterProps("column", 1)}
+            />
 
-        <div>
-          <label htmlFor=""></label>
-          <textarea name="" id="" ref={js} onInput={update}></textarea>
-        </div>
-
-        <iframe srcDoc={template}></iframe>
-
-      </section>
-    </main>
+            <div
+              className={"grid-gutter item-vertical gutter-vertical"}
+              {...getGutterProps("row", 1)}
+            />
+          </div>
+        )}
+      />
+    </main >
   )
 }
 
