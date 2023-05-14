@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import Split from 'react-split-grid'
 import { encode, decode } from 'js-base64'
+import htmlIcon from './assets/html-logo.png'
+import cssIcon from './assets/css-logo.png'
+import javascriptIcon from './assets/javascript-logo.png'
 import './App.css'
 
 type TemplateProps = {
@@ -78,17 +81,17 @@ function App() {
           getGutterProps,
         }) => (
           <div className={"grid-container"} {...getGridProps()}>
-            <div className={"grid-item item-block1"}>
-              <label htmlFor=""></label>
+            <div className={"item grid-item item-block1"}>
               <textarea name="" id="" ref={html} onInput={update}></textarea>
+              <img alt="Icono de" src={htmlIcon} />
             </div>
-            <div className={"grid-item item-block2"}>
-              <label htmlFor=""></label>
+            <div className={"item grid-item item-block2"}>
               <textarea name="" id="" ref={css} onInput={update}></textarea>
+              <img alt="Icono de" src={cssIcon} />
             </div>
-            <div className={"grid-item item-block3"}>
-              <label htmlFor=""></label>
+            <div className={"item grid-item item-block3"}>
               <textarea name="" id="" ref={js} onInput={update}></textarea>
+              <img alt="Icono de" src={javascriptIcon} />
             </div>
             <div className={"grid-item item-block4"}>
               <iframe srcDoc={template}></iframe>
@@ -99,10 +102,16 @@ function App() {
               {...getGutterProps("column", 1)}
             />
 
+            {/* <div
+              className={"grid-gutter item-horizontal2 gutter-horizontal"}
+              {...getGutterProps("column", 3)}
+            /> */}
+
             <div
               className={"grid-gutter item-vertical gutter-vertical"}
               {...getGutterProps("row", 1)}
             />
+
           </div>
         )}
       />
