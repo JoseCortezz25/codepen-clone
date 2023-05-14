@@ -1,6 +1,13 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Split from 'react-split-grid'
+import { encode, decode } from 'js-base64'
 import './App.css'
+
+type TemplateProps = {
+  cssValue: string | undefined,
+  htmlValue: string | undefined,
+  jsValue: string | undefined
+}
 
 function App() {
   const html = useRef<HTMLTextAreaElement>(null)
@@ -8,15 +15,40 @@ function App() {
   const js = useRef<HTMLTextAreaElement>(null)
   const [template, setTemplate] = useState('')
 
-  const update = () => {
-    const htmlTemplate = createHtml()
-    setTemplate(htmlTemplate)
-  }
+  useEffect(() => {
+    const { pathname } = window.location;
+    const [rawHtml, rawCss, rawJs] = pathname.slice(1).split('%7C')
 
-  const createHtml = () => {
+    const pureHtml = rawHtml === undefined ? decode(rawHtml) : ''
+    const pureCss = rawHtml === undefined ? decode(rawCss) : ''
+    const pureJs = rawHtml === undefined ? decode(rawJs) : ''
+
+    if (html.current !== null && css.current !== null && js.current !== null) {
+      html.current.value = pureHtml
+      css.current.value = pureCss
+      js.current.value = pureJs
+    }
+
+    const htmlForPreview = createHtml({ htmlValue: html.current?.value, cssValue: css.current?.value, jsValue: js.current?.value })
+    setTemplate(htmlForPreview)
+  }, [])
+
+  const update = () => {
     const htmlValue = html.current?.value;
     const cssValue = css.current?.value;
     const jsValue = js.current?.value;
+
+    if (typeof htmlValue !== 'undefined' && typeof cssValue !== 'undefined' && typeof jsValue !== 'undefined') {
+      const hashedCode = `${encode(htmlValue)}|${encode(cssValue)}|${encode(jsValue)}`
+      window.history.replaceState(null, '', `/${hashedCode}`)
+    }
+
+    const htmlForPreview = createHtml({ htmlValue, cssValue, jsValue })
+    setTemplate(htmlForPreview)
+  }
+
+  const createHtml = ({ cssValue, htmlValue, jsValue }: TemplateProps) => {
+    console.log('de una');
 
     return `
       <!DOCTYPE html>
@@ -27,20 +59,17 @@ function App() {
           </style>
         </head>
         <body>
+        ${htmlValue}
           <script>
             ${jsValue}
           </script>
-          ${htmlValue}
         </body>
       </html>
     `
   }
 
-
-
   return (
     <main className='Main'>
-
       <Split
         columnCursor="col-resize"
         rowCursor="row-resize"
