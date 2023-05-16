@@ -4,8 +4,11 @@ import { encode, decode } from 'js-base64'
 import htmlIcon from './assets/html-logo.png'
 import cssIcon from './assets/css-logo.png'
 import javascriptIcon from './assets/javascript-logo.png'
+import fileIcon from './assets/file-zip.svg'
 import { Editor } from '@monaco-editor/react';
 import { OnChange } from '@monaco-editor/react'
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 import './App.css'
 
 type TemplateProps = {
@@ -23,7 +26,6 @@ function App() {
   const COMMON_EDITOR_OPTIONS = {
     automaticLayout: true,
     fontSize: 18,
-
   }
 
   useEffect(() => {
@@ -44,6 +46,20 @@ function App() {
     const htmlForPreview = createHtml({ htmlValue: pureHtml, cssValue: pureCss, jsValue: pureJs })
     setTemplate(htmlForPreview)
   }, [])
+
+
+  const downloadCode = () => {
+    const zip = new JSZip();
+    zip.file('index.html', html);
+    zip.file('script.js', js);
+    zip.file('style.css', css);
+
+    zip.generateAsync({ type: 'blob' })
+      .then((content: Blob) => {
+        saveAs(content, 'codeo.zip');
+      });
+  }
+
 
   const handleEditorHtml: OnChange = (value) => {
     setHtml(value)
@@ -93,67 +109,73 @@ function App() {
 
   return (
     <main className='Main'>
-      <Split
-        columnCursor="col-resize"
-        rowCursor="row-resize"
-        render={({
-          getGridProps,
-          getGutterProps,
-        }) => (
-          <div className={"grid-container"} {...getGridProps()}>
-            <div className={"item grid-item item-block1"}>
-              <Editor
-                defaultValue={html}
-                defaultLanguage="html"
-                onChange={handleEditorHtml}
-                theme='vs-dark'
-                options={{
-                  ...COMMON_EDITOR_OPTIONS
-                }}
-              />
-              <img alt="Icono de HTML" src={htmlIcon} />
-            </div>
-            <div className={"item grid-item item-block2"}>
-              <Editor
-                defaultValue={css}
-                defaultLanguage="css"
-                onChange={handleEditorCss}
-                theme='vs-dark'
-                options={{
-                  ...COMMON_EDITOR_OPTIONS
-                }}
-              />
-              <img alt="Icono de CSS" src={cssIcon} />
-            </div>
-            <div className={"item grid-item item-block3"}>
-              <Editor
-                defaultValue={js}
-                defaultLanguage="javascript"
-                onChange={handleEditorJs}
-                theme='vs-dark'
-                options={{
-                  ...COMMON_EDITOR_OPTIONS
-                }}
-              />
-              <img alt="Icono de JS" src={javascriptIcon} />
-            </div>
-            <div className={"grid-item item-block4"}>
-              <iframe srcDoc={template}></iframe>
-            </div>
+      <section>
+        <Split
+          columnCursor="col-resize"
+          rowCursor="row-resize"
+          render={({
+            getGridProps,
+            getGutterProps,
+          }) => (
+            <div className={"grid-container"} {...getGridProps()}>
+              <div className={"item grid-item item-block1"}>
+                <Editor
+                  defaultValue={html}
+                  defaultLanguage="html"
+                  onChange={handleEditorHtml}
+                  theme='vs-dark'
+                  options={{
+                    ...COMMON_EDITOR_OPTIONS
+                  }}
+                />
+                <img alt="Icono de HTML" src={htmlIcon} />
+              </div>
+              <div className={"item grid-item item-block2"}>
+                <Editor
+                  defaultValue={css}
+                  defaultLanguage="css"
+                  onChange={handleEditorCss}
+                  theme='vs-dark'
+                  options={{
+                    ...COMMON_EDITOR_OPTIONS
+                  }}
+                />
+                <img alt="Icono de CSS" src={cssIcon} />
+              </div>
+              <div className={"item grid-item item-block3"}>
+                <Editor
+                  defaultValue={js}
+                  defaultLanguage="javascript"
+                  onChange={handleEditorJs}
+                  theme='vs-dark'
+                  options={{
+                    ...COMMON_EDITOR_OPTIONS
+                  }}
+                />
+                <img alt="Icono de JS" src={javascriptIcon} />
+              </div>
+              <div className={"grid-item item-block4"}>
+                <iframe srcDoc={template}></iframe>
+              </div>
 
-            <div
-              className={"grid-gutter item-horizontal gutter-horizontal"}
-              {...getGutterProps("column", 1)}
-            />
+              <div
+                className={"grid-gutter item-horizontal gutter-horizontal"}
+                {...getGutterProps("column", 1)} />
 
-            <div
-              className={"grid-gutter item-vertical gutter-vertical"}
-              {...getGutterProps("row", 1)}
-            />
+              <div
+                className={"grid-gutter item-vertical gutter-vertical"}
+                {...getGutterProps("row", 1)}
+              />
 
-          </div>
-        )}
-      />
+            </div>
+          )}
+        />
+      </section>
+      <aside className='menu'>
+        <button onClick={downloadCode}>
+          <img src={fileIcon} alt="Icono de boton zip" />
+        </button>
+      </aside>
     </main >
   )
 }
