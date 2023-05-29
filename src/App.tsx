@@ -4,6 +4,7 @@ import { encode, decode } from 'js-base64'
 import htmlIcon from './assets/html-logo.png'
 import cssIcon from './assets/css-logo.png'
 import javascriptIcon from './assets/javascript-logo.png'
+import githubIcon from './assets/github.svg'
 import fileIcon from './assets/file-zip.svg'
 import { Editor } from '@monaco-editor/react';
 import { OnChange } from '@monaco-editor/react'
@@ -47,7 +48,6 @@ function App() {
     setTemplate(htmlForPreview)
   }, [])
 
-
   const downloadCode = () => {
     const zip = new JSZip();
     zip.file('index.html', html);
@@ -60,20 +60,25 @@ function App() {
       });
   }
 
-
   const handleEditorHtml: OnChange = (value) => {
-    setHtml(value)
-    update()
+    if (typeof value === 'string') {
+      setHtml(value)
+      update()
+    }
   }
 
   const handleEditorCss: OnChange = (value) => {
-    setCss(value)
-    update()
+    if (typeof value === 'string') {
+      setCss(value)
+      update()
+    }
   }
 
   const handleEditorJs: OnChange = (value) => {
-    setJs(value)
-    update()
+    if (typeof value === 'string') {
+      setJs(value)
+      update()
+    }
   }
 
   const update = () => {
@@ -87,8 +92,6 @@ function App() {
   }
 
   const createHtml = ({ cssValue, htmlValue, jsValue }: TemplateProps) => {
-    console.log('de una');
-
     return `
       <!DOCTYPE html>
       <html>
@@ -122,7 +125,7 @@ function App() {
                 <Editor
                   defaultValue={html}
                   defaultLanguage="html"
-                  onChange={handleEditorHtml}
+                  onChange={(handleEditorHtml)}
                   theme='vs-dark'
                   options={{
                     ...COMMON_EDITOR_OPTIONS
@@ -166,19 +169,24 @@ function App() {
                 className={"grid-gutter item-vertical gutter-vertical"}
                 {...getGutterProps("row", 1)}
               />
-
             </div>
           )}
         />
       </section>
       <aside className='menu'>
         <button onClick={downloadCode}>
-          <img src={fileIcon} alt="Icono de boton zip" />
+          <img src={githubIcon} alt="Icono de boton github" />
         </button>
+
+        <a href="https://github.com/JoseCortezz25/codepen-clone">
+          <button onClick={downloadCode}>
+            <img src={fileIcon} alt="Icono de boton zip" />
+          </button>
+        </a>
+
       </aside>
-    </main >
+    </main>
   )
 }
-
 
 export default App
